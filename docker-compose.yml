@@ -1,0 +1,52 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: sammy
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: back-office
+    container_name: back-office-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - back-office
+
+  db:
+    image: mysql:5.7
+    container_name: back-office-db
+    restart: unless-stopped
+    ports:
+      - "3388:3306"
+    volumes:
+      - ./docker-volumes-data/db:/var/lib/database
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - back-office
+
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: back-office-nginx
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d
+    networks:
+      - back-office
+
+networks:
+  back-office:
+    driver: bridge
+
