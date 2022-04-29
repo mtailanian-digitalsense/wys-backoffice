@@ -46,11 +46,10 @@ class PasswordResetRequest extends Notification
         return (new MailMessage)
             ->greeting('¡Hola!')
             ->subject('Recuperación de contraseña')
-            ->line('Hemos recibido tu solicitud para reestablecer la contraseña de tu cuenta.
-            Para continuar haz click en el siguiente botón:')
+            ->line('Hemos recibido la solicitud para restablecer la contraseña de tu cuenta.')
+            ->line('Para continuar, haz click en el siguiente botón:')
             ->action('Restablecer contraseña', $url)
-            ->line('Si tienes problemas al hacer click en el botón "Reestablecer contraseña",
-            copia y pega la siguiente URL en tu navegador web');
+            ->line('En el caso de no haber realizado esta solicitud por favor ignora el presente correo electronico.');
     }
 
     /**

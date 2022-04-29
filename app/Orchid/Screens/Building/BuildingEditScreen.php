@@ -361,7 +361,12 @@ class BuildingEditScreen extends Screen
         $this->update_renters($building->id, $renters, $renters_id);
 
         // Floors
-        $this->save_floors($building->id, $floors, $floors_id);
+        try {
+            $this->save_floors($building->id, $floors, $floors_id);
+        } catch (\Exception $e) {
+            Toast::error('Error al procesar el edificio, intententelo más tarde.');
+            return redirect()->route('platform.modules.buildings');
+        }
 
         // Images
         //TODO: this code needs to be refactored
@@ -373,14 +378,24 @@ class BuildingEditScreen extends Screen
         }
 
         if (isset($arr_result)) {
-            $currentImages = $api->get_building_images($building->id);
+            try {
+                $currentImages = $api->get_building_images($building->id);
+            } catch (\Exception $e) {
+                Toast::error('Error al procesar el edificio, intententelo más tarde.');
+                return redirect()->route('platform.modules.buildings');
+            }
             $finalImages = collect([]);
             foreach ($arr_result as $key => $value) {
                 if (!$value) {
                     $finalImages->push(['link' => $currentImages[$key]->link]);
                 }
             }
-            $this->save_building_images($apiResponse->id, $newImages, $finalImages);
+            try {
+                $this->save_building_images($apiResponse->id, $newImages, $finalImages);
+            } catch (\Exception $e) {
+                Toast::error('Error al procesar el edificio, intententelo más tarde.');
+                return redirect()->route('platform.modules.buildings');
+            }
         }
 
         Toast::info(__('Edificio editado correctamente'));
